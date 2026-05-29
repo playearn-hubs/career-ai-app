@@ -1,0 +1,35 @@
+import React from "react";
+import { ActivityIndicator, View } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../types/navigation";
+import { AuthNavigator } from "../features/auth/navigation";
+import { useAuth } from "../features/auth";
+import { HomeScreen } from "../screens";
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+function LoadingScreen() {
+  return (
+    <View className="flex-1 items-center justify-center bg-surface">
+      <ActivityIndicator size="large" color="#6366F1" />
+    </View>
+  );
+}
+
+export function RootNavigator() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {isAuthenticated ? (
+        <Stack.Screen name="App" component={HomeScreen} />
+      ) : (
+        <Stack.Screen name="Auth" component={AuthNavigator} />
+      )}
+    </Stack.Navigator>
+  );
+}

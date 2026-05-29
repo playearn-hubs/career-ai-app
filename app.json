@@ -3,13 +3,16 @@
     "name": "App",
     "slug": "App",
     "version": "1.0.0",
+    "scheme": "com.app.mobile",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
+      "bundleIdentifier": "com.app.mobile",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.app.mobile",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -20,6 +23,17 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "googleAndroidClientId": "",
+      "googleIosClientId": "",
+      "googleWebClientId": ""
+    },
+    "plugins": [
+      "expo-dev-client",
+      "expo-font",
+      "expo-splash-screen",
+      "expo-web-browser"
+    ]
   }
 }
