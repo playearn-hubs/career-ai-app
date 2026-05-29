@@ -1,4 +1,5 @@
 import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 const extra = Constants.expoConfig?.extra as Record<string, string> | undefined;
 
@@ -20,7 +21,17 @@ export const authConfig = {
   },
 } as const;
 
-export function isGoogleAuthConfigured(): boolean {
-  const { androidClientId, iosClientId, webClientId } = authConfig.google;
-  return Boolean(androidClientId || iosClientId || webClientId);
+export function getGoogleClientIdForPlatform(): string {
+  if (Platform.OS === "android") {
+    return authConfig.google.androidClientId;
+  }
+  if (Platform.OS === "ios") {
+    return authConfig.google.iosClientId;
+  }
+  return authConfig.google.webClientId;
 }
+
+export function isGoogleAuthConfigured(): boolean {
+  return Boolean(getGoogleClientIdForPlatform());
+}
+

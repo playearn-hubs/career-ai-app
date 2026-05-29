@@ -5,13 +5,16 @@ import { RootStackParamList } from "../types/navigation";
 import { AuthNavigator } from "../features/auth/navigation";
 import { useAuth } from "../features/auth";
 import { HomeScreen } from "../screens";
+import { useTheme } from "../theme";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function LoadingScreen() {
+  const { colors } = useTheme();
+
   return (
     <View className="flex-1 items-center justify-center bg-surface">
-      <ActivityIndicator size="large" color="#6366F1" />
+      <ActivityIndicator size="large" color={colors.primary} />
     </View>
   );
 }

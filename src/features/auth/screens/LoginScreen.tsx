@@ -128,8 +128,8 @@ export function LoginScreen({ navigation }: Props) {
             disabled={!isConfigured}
           />
           {!isConfigured ? (
-            <Animated.Text className="mt-3 text-center text-xs text-content-tertiary">
-              Add Google client IDs in .env to enable Google sign-in
+            <Animated.Text className="mt-3 text-center font-sans text-xs text-content-tertiary">
+              Add Google client IDs in .env, then rebuild with npx expo run:android
             </Animated.Text>
           ) : null}
         </Animated.View>

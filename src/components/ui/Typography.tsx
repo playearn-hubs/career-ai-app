@@ -8,7 +8,7 @@ type TypographyProps = {
 
 export function Heading({ children, className = "" }: TypographyProps) {
   return (
-    <Text className={`text-3xl font-bold text-content ${className}`}>
+    <Text className={`font-sans-bold text-3xl text-content ${className}`}>
       {children}
     </Text>
   );
@@ -16,7 +16,7 @@ export function Heading({ children, className = "" }: TypographyProps) {
 
 export function Subheading({ children, className = "" }: TypographyProps) {
   return (
-    <Text className={`text-lg text-content-secondary ${className}`}>
+    <Text className={`font-sans text-lg text-content-secondary ${className}`}>
       {children}
     </Text>
   );
@@ -24,7 +24,7 @@ export function Subheading({ children, className = "" }: TypographyProps) {
 
 export function Body({ children, className = "" }: TypographyProps) {
   return (
-    <Text className={`text-base text-content ${className}`}>
+    <Text className={`font-sans text-base text-content ${className}`}>
       {children}
     </Text>
   );
@@ -32,7 +32,7 @@ export function Body({ children, className = "" }: TypographyProps) {
 
 export function Caption({ children, className = "" }: TypographyProps) {
   return (
-    <Text className={`text-sm text-content-tertiary ${className}`}>
+    <Text className={`font-sans text-sm text-content-tertiary ${className}`}>
       {children}
     </Text>
   );

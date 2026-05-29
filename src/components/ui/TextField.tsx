@@ -6,6 +6,7 @@ import {
   Text,
   Pressable,
 } from "react-native";
+import { useTheme } from "../../theme";
 
 type TextFieldProps = TextInputProps & {
   label: string;
@@ -20,17 +21,19 @@ export function TextField({
   className = "",
   ...props
 }: TextFieldProps) {
+  const { colors } = useTheme();
+
   return (
     <View className="gap-2">
-      <Text className="text-sm font-medium text-content-secondary">
+      <Text className="font-sans-medium text-sm text-content-secondary">
         {label}
       </Text>
       <View className="relative">
         <TextInput
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor={colors.contentTertiary}
           className={`
-            rounded-2xl border bg-white px-4 py-4 text-base text-content
-            ${error ? "border-red-400" : "border-slate-200"}
+            rounded-2xl border bg-card px-4 py-4 font-sans text-base text-content
+            ${error ? "border-red-400" : "border-border"}
             ${rightElement ? "pr-12" : ""}
             ${className}
           `}
@@ -60,7 +63,7 @@ export function PasswordField(props: PasswordFieldProps) {
       secureTextEntry={!visible}
       rightElement={
         <Pressable onPress={() => setVisible((v) => !v)} hitSlop={8}>
-          <Text className="text-sm font-semibold text-primary-600">
+          <Text className="font-sans-semibold text-sm text-primary">
             {visible ? "Hide" : "Show"}
           </Text>
         </Pressable>

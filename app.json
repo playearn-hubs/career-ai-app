@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "App",
-    "slug": "App",
+    "name": "Career AI",
+    "slug": "career-ai",
     "version": "1.0.0",
     "scheme": "com.app.mobile",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/favicon/web-app-manifest-512x512.png",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.app.mobile",
       "supportsTablet": true
@@ -14,15 +14,14 @@
     "android": {
       "package": "com.app.mobile",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#00B4D8",
+        "foregroundImage": "./assets/favicon/web-app-manifest-512x512.png",
+        "monochromeImage": "./assets/favicon/web-app-manifest-192x192.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon/favicon.ico"
     },
     "extra": {
       "googleAndroidClientId": "",
@@ -32,8 +31,22 @@
     "plugins": [
       "expo-dev-client",
       "expo-font",
-      "expo-splash-screen",
-      "expo-web-browser"
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#00B4D8"
+        }
+      ],
+      "expo-web-browser",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.1007119854456-ansh885oem7j8vhobqqdu09dg7r6hjub"
+        }
+      ]
     ]
   }
 }

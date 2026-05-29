@@ -1,0 +1,46 @@
+{
+  "site": {
+    "name": "Career AI",
+    "shortName": "Career AI",
+    "themeColor": "#00B4D8",
+    "backgroundColor": "#FFFFFF"
+  },
+  "paths": {
+    "faviconDir": "./assets/favicon",
+    "faviconSvg": "./assets/favicon/favicon.svg",
+    "faviconIco": "./assets/favicon/favicon.ico",
+    "faviconPng": "./assets/favicon/favicon-96x96.png",
+    "appleTouchIcon": "./assets/favicon/apple-touch-icon.png",
+    "appIcon": "./assets/favicon/web-app-manifest-512x512.png",
+    "pwaIcon192": "./assets/favicon/web-app-manifest-192x192.png",
+    "pwaIcon512": "./assets/favicon/web-app-manifest-512x512.png",
+    "logo": "./assets/favicon/favicon.svg",
+    "splash": "./assets/splash-icon.png"
+  },
+  "web": {
+    "logo": "/favicon/favicon.svg",
+    "faviconSvg": "/favicon/favicon.svg",
+    "faviconIco": "/favicon/favicon.ico",
+    "faviconPng": "/favicon/favicon-96x96.png",
+    "appleTouchIcon": "/favicon/apple-touch-icon.png",
+    "manifest": "/favicon/site.webmanifest"
+  },
+  "resolved": {
+    "faviconSvg": "favicon.svg",
+    "faviconIco": "favicon.ico",
+    "faviconPng": "favicon-96x96.png",
+    "appleTouch": "apple-touch-icon.png",
+    "manifest192": "web-app-manifest-192x192.png",
+    "manifest512": "web-app-manifest-512x512.png",
+    "logo": "favicon.svg",
+    "splash": "splash-icon.png",
+    "files": [
+      "apple-touch-icon.png",
+      "favicon-96x96.png",
+      "favicon.ico",
+      "favicon.svg",
+      "web-app-manifest-192x192.png",
+      "web-app-manifest-512x512.png"
+    ]
+  }
+}
