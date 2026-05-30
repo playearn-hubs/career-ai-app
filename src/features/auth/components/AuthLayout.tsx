@@ -3,7 +3,7 @@ import { View, Text, Pressable, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemeToggle } from "../../../components/ui";
-import { useTheme } from "../../../theme";
+import { useTheme, useThemedStyles } from "../../../theme";
 import { appLogo } from "../../../config/branding";
 
 type AuthLayoutProps = {
@@ -21,9 +21,10 @@ export function AuthLayout({
 }: AuthLayoutProps) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
+  const themed = useThemedStyles();
 
   return (
-    <View className="flex-1 bg-surface-secondary">
+    <View className="flex-1" style={themed.screenSecondary}>
       <LinearGradient
         colors={[...colors.gradient]}
         start={{ x: 0, y: 0 }}
@@ -37,7 +38,7 @@ export function AuthLayout({
         }}
       >
         <View className="mb-4 flex-row items-center justify-end">
-          <ThemeToggle variant="onPrimary" className="border-white/30 bg-white/15" />
+          <ThemeToggle variant="onPrimary" />
         </View>
         <View className="mb-2 h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white/20">
           <Image source={appLogo} className="h-10 w-10" resizeMode="contain" />
@@ -48,12 +49,17 @@ export function AuthLayout({
         </Text>
       </LinearGradient>
 
-      <View className="flex-1 px-6 pt-8">{children}</View>
+      <View className="flex-1 px-6 pt-8" style={themed.screenSecondary}>
+        {children}
+      </View>
 
       {footer ? (
         <View
           className="items-center px-6 pb-6"
-          style={{ paddingBottom: insets.bottom + 16 }}
+          style={[
+            themed.screenSecondary,
+            { paddingBottom: insets.bottom + 16 },
+          ]}
         >
           {footer}
         </View>
@@ -69,12 +75,16 @@ type AuthLinkProps = {
 };
 
 export function AuthLink({ prompt, action, onPress }: AuthLinkProps) {
+  const themed = useThemedStyles();
+
   return (
     <Pressable onPress={onPress} className="flex-row items-center gap-1">
-      <Text className="font-sans text-base text-content-secondary">
+      <Text className="font-sans text-base" style={themed.textSecondary}>
         {prompt}
       </Text>
-      <Text className="font-sans-semibold text-base text-primary">{action}</Text>
+      <Text className="font-sans-semibold text-base" style={themed.textPrimary}>
+        {action}
+      </Text>
     </Pressable>
   );
 }

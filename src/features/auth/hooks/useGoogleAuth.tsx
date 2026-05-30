@@ -9,14 +9,8 @@ import { Platform } from "react-native";
 import Constants from "expo-constants";
 import { authConfig, isGoogleAuthConfigured } from "../../../config/auth.config";
 
-type GoogleProfile = {
-  name?: string;
-  email?: string;
-  picture?: string;
-};
-
 export type GoogleAuthResult =
-  | { success: true; accessToken: string; profile: GoogleProfile }
+  | { success: true; idToken: string }
   | { success: false; error: string };
 
 type GoogleAuthContextValue = {
@@ -33,7 +27,7 @@ const stubValue: GoogleAuthContextValue = {
   signInWithGoogle: async () => ({
     success: false,
     error: isExpoGo
-      ? "Google Sign-In does not work in Expo Go. Run: npx expo run:android"
+      ? "Google Sign-In requires a development build. Run: npx expo run:android"
       : "Google OAuth is not configured. Add client IDs to .env",
   }),
   isLoading: false,
@@ -65,7 +59,7 @@ async function signInWithGoogleNative(): Promise<GoogleAuthResult | null> {
     return {
       success: false,
       error:
-        "Google Sign-In does not work in Expo Go. Build the app with: npx expo run:android",
+        "Google Sign-In requires a development build. Run: npx expo run:android",
     };
   }
 
@@ -88,17 +82,19 @@ async function signInWithGoogleNative(): Promise<GoogleAuthResult | null> {
       return null;
     }
 
-    const { user } = result.data;
     const tokens = await GoogleSignin.getTokens();
+
+    if (!tokens.idToken) {
+      return {
+        success: false,
+        error:
+          "Could not obtain Google ID token. Ensure EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID is set.",
+      };
+    }
 
     return {
       success: true,
-      accessToken: tokens.accessToken,
-      profile: {
-        name: user.name ?? undefined,
-        email: user.email,
-        picture: user.photo ?? undefined,
-      },
+      idToken: tokens.idToken,
     };
   } catch (error) {
     if (isErrorWithCode(error)) {

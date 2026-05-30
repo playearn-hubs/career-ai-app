@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useTheme } from "../../theme";
 
 type ThemeToggleProps = {
@@ -11,18 +11,72 @@ export function ThemeToggle({
   className = "",
   variant = "default",
 }: ThemeToggleProps) {
-  const { mode, toggleTheme } = useTheme();
+  const { mode, toggleTheme, colors } = useTheme();
+  const isDark = mode === "dark";
 
-  const label = mode === "dark" ? "Light mode" : "Dark mode";
-  const textClass =
-    variant === "onPrimary" ? "text-white" : "text-content";
+  const isOnPrimary = variant === "onPrimary";
+
+  const backgroundColor = isOnPrimary
+    ? "rgba(255, 255, 255, 0.95)"
+    : colors.card;
+
+  const borderColor = isOnPrimary
+    ? "rgba(255, 255, 255, 0.6)"
+    : colors.border;
+
+  const textColor = isOnPrimary ? "#0F172A" : colors.content;
+
+  const iconBg = isOnPrimary
+    ? "rgba(0, 180, 216, 0.15)"
+    : isDark
+      ? "rgba(0, 180, 216, 0.25)"
+      : "rgba(0, 180, 216, 0.12)";
 
   return (
     <Pressable
       onPress={toggleTheme}
-      className={`flex-row items-center justify-center rounded-pill border border-border bg-card px-4 py-2 active:opacity-80 ${className}`}
+      accessibilityRole="button"
+      accessibilityLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className={className}
+      style={({ pressed }) => ({
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        borderRadius: 9999,
+        borderWidth: 1.5,
+        backgroundColor,
+        borderColor,
+        opacity: pressed ? 0.85 : 1,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: isOnPrimary ? 0.15 : 0.08,
+        shadowRadius: 6,
+        elevation: 4,
+      })}
     >
-      <Text className={`font-sans-medium text-sm ${textClass}`}>{label}</Text>
+      <View
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: iconBg,
+        }}
+      >
+        <Text style={{ fontSize: 16 }}>{isDark ? "☀️" : "🌙"}</Text>
+      </View>
+      <Text
+        style={{
+          fontFamily: "Inter_600SemiBold",
+          fontSize: 14,
+          color: textColor,
+        }}
+      >
+        {isDark ? "Light" : "Dark"}
+      </Text>
     </Pressable>
   );
 }

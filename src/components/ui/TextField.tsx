@@ -6,7 +6,7 @@ import {
   Text,
   Pressable,
 } from "react-native";
-import { useTheme } from "../../theme";
+import { useTheme, useThemedStyles } from "../../theme";
 
 type TextFieldProps = TextInputProps & {
   label: string;
@@ -19,24 +19,26 @@ export function TextField({
   error,
   rightElement,
   className = "",
+  style,
   ...props
 }: TextFieldProps) {
   const { colors } = useTheme();
+  const themed = useThemedStyles();
 
   return (
     <View className="gap-2">
-      <Text className="font-sans-medium text-sm text-content-secondary">
+      <Text className="font-sans-medium text-sm" style={themed.textSecondary}>
         {label}
       </Text>
       <View className="relative">
         <TextInput
           placeholderTextColor={colors.contentTertiary}
-          className={`
-            rounded-2xl border bg-card px-4 py-4 font-sans text-base text-content
-            ${error ? "border-red-400" : "border-border"}
-            ${rightElement ? "pr-12" : ""}
-            ${className}
-          `}
+          className={`rounded-2xl border px-4 py-4 font-sans text-base ${className}`}
+          style={[
+            themed.input,
+            error ? { borderColor: colors.error } : null,
+            style,
+          ]}
           {...props}
         />
         {rightElement ? (
@@ -46,7 +48,9 @@ export function TextField({
         ) : null}
       </View>
       {error ? (
-        <Text className="text-sm text-red-500">{error}</Text>
+        <Text className="text-sm" style={{ color: colors.error }}>
+          {error}
+        </Text>
       ) : null}
     </View>
   );
@@ -56,6 +60,7 @@ type PasswordFieldProps = Omit<TextFieldProps, "secureTextEntry" | "rightElement
 
 export function PasswordField(props: PasswordFieldProps) {
   const [visible, setVisible] = React.useState(false);
+  const themed = useThemedStyles();
 
   return (
     <TextField
@@ -63,7 +68,7 @@ export function PasswordField(props: PasswordFieldProps) {
       secureTextEntry={!visible}
       rightElement={
         <Pressable onPress={() => setVisible((v) => !v)} hitSlop={8}>
-          <Text className="font-sans-semibold text-sm text-primary">
+          <Text className="font-sans-semibold text-sm" style={themed.textPrimary}>
             {visible ? "Hide" : "Show"}
           </Text>
         </Pressable>

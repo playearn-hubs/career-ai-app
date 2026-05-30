@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Animated, Alert, View } from "react-native";
+import { Animated, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../../types/navigation";
@@ -11,11 +11,16 @@ import { useAuth } from "../context";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import { useGsapStagger } from "../hooks/useGsapEntrance";
 import { loginSchema } from "../schemas/auth.schema";
+import { getErrorMessage } from "../../../lib/api/errors";
+import { useToast } from "../../../providers";
+import { useThemedStyles } from "../../../theme";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
 export function LoginScreen({ navigation }: Props) {
   const { signIn, signInWithGoogle } = useAuth();
+  const toast = useToast();
+  const themed = useThemedStyles();
   const {
     signInWithGoogle: googleAuth,
     isLoading: googleLoading,
@@ -38,6 +43,8 @@ export function LoginScreen({ navigation }: Props) {
         if (key) fieldErrors[key] = issue.message;
       });
       setErrors(fieldErrors);
+      const firstError = result.error.issues[0]?.message;
+      toast.showError(firstError ?? "Please fix the errors below");
       return;
     }
 
@@ -45,8 +52,11 @@ export function LoginScreen({ navigation }: Props) {
     setLoading(true);
     try {
       await signIn(result.data);
-    } catch {
-      Alert.alert("Login failed", "Please check your credentials and try again.");
+      toast.showSuccess("Welcome back! You're signed in.");
+    } catch (error) {
+      toast.showError(
+        getErrorMessage(error, "Please check your credentials and try again.")
+      );
     } finally {
       setLoading(false);
     }
@@ -57,14 +67,17 @@ export function LoginScreen({ navigation }: Props) {
     if (!result) return;
 
     if (!result.success) {
-      Alert.alert("Google Sign-In", result.error);
+      toast.showError(result.error);
       return;
     }
 
     try {
-      await signInWithGoogle(result.accessToken, result.profile);
-    } catch {
-      Alert.alert("Login failed", "Could not complete Google sign-in.");
+      await signInWithGoogle(result.idToken);
+      toast.showSuccess("Signed in with Google.");
+    } catch (error) {
+      toast.showError(
+        getErrorMessage(error, "Could not complete Google sign-in.")
+      );
     }
   };
 
@@ -128,7 +141,10 @@ export function LoginScreen({ navigation }: Props) {
             disabled={!isConfigured}
           />
           {!isConfigured ? (
-            <Animated.Text className="mt-3 text-center font-sans text-xs text-content-tertiary">
+            <Animated.Text
+              className="mt-3 text-center font-sans text-xs"
+              style={{ color: themed.colors.contentTertiary }}
+            >
               Add Google client IDs in .env, then rebuild with npx expo run:android
             </Animated.Text>
           ) : null}

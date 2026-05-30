@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useColorScheme as useSystemColorScheme } from "react-native";
+import { Appearance, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useColorScheme as useNativeWindColorScheme } from "nativewind";
 import {
@@ -17,7 +17,7 @@ import {
 
 const THEME_STORAGE_KEY = "@career-ai/theme-mode";
 
-export type ThemePreference = ThemeMode | "system";
+export type ThemePreference = ThemeMode;
 
 type ThemeContextValue = {
   preference: ThemePreference;
@@ -29,60 +29,59 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function resolveMode(
-  preference: ThemePreference,
-  systemScheme: ThemeMode | null | undefined
-): ThemeMode {
-  if (preference === "system") {
-    return systemScheme === "dark" ? "dark" : "light";
-  }
-  return preference;
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const systemScheme = useSystemColorScheme();
   const { setColorScheme } = useNativeWindColorScheme();
-  const [preference, setPreferenceState] = useState<ThemePreference>("system");
+  const [mode, setMode] = useState<ThemeMode>("light");
 
-  const mode = resolveMode(
-    preference,
-    systemScheme === "dark" ? "dark" : "light"
+  const applyMode = useCallback(
+    (next: ThemeMode) => {
+      setMode(next);
+      Appearance.setColorScheme(next);
+      setColorScheme(next);
+    },
+    [setColorScheme]
   );
 
   useEffect(() => {
     AsyncStorage.getItem(THEME_STORAGE_KEY).then((stored) => {
-      if (stored === "light" || stored === "dark" || stored === "system") {
-        setPreferenceState(stored);
+      if (stored === "light" || stored === "dark") {
+        applyMode(stored);
       }
     });
-  }, []);
+  }, [applyMode]);
 
-  useEffect(() => {
-    setColorScheme(mode);
-  }, [mode, setColorScheme]);
-
-  const setPreference = useCallback((next: ThemePreference) => {
-    setPreferenceState(next);
-    void AsyncStorage.setItem(THEME_STORAGE_KEY, next);
-  }, []);
+  const setPreference = useCallback(
+    (next: ThemePreference) => {
+      applyMode(next);
+      void AsyncStorage.setItem(THEME_STORAGE_KEY, next);
+    },
+    [applyMode]
+  );
 
   const toggleTheme = useCallback(() => {
-    setPreference(mode === "dark" ? "light" : "dark");
+    const nextMode: ThemeMode = mode === "dark" ? "light" : "dark";
+    setPreference(nextMode);
   }, [mode, setPreference]);
+
+  const colors = useMemo(() => getThemeColors(mode), [mode]);
 
   const value = useMemo(
     () => ({
-      preference,
+      preference: mode,
       mode,
-      colors: getThemeColors(mode),
+      colors,
       setPreference,
       toggleTheme,
     }),
-    [preference, mode, setPreference, toggleTheme]
+    [mode, colors, setPreference, toggleTheme]
   );
 
   return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>
+      <View className="flex-1" style={{ backgroundColor: colors.surface }}>
+        {children}
+      </View>
+    </ThemeContext.Provider>
   );
 }
 

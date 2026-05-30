@@ -5,15 +5,19 @@ import { RootStackParamList } from "../types/navigation";
 import { AuthNavigator } from "../features/auth/navigation";
 import { useAuth } from "../features/auth";
 import { HomeScreen } from "../screens";
-import { useTheme } from "../theme";
+import { useTheme, useThemedStyles } from "../theme";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function LoadingScreen() {
   const { colors } = useTheme();
+  const themed = useThemedStyles();
 
   return (
-    <View className="flex-1 items-center justify-center bg-surface">
+    <View
+      className="flex-1 items-center justify-center"
+      style={themed.screen}
+    >
       <ActivityIndicator size="large" color={colors.primary} />
     </View>
   );

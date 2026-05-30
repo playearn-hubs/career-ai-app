@@ -13,10 +13,10 @@
     },
     "android": {
       "package": "com.app.mobile",
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "backgroundColor": "#00B4D8",
-        "foregroundImage": "./assets/favicon/web-app-manifest-512x512.png",
-        "monochromeImage": "./assets/favicon/web-app-manifest-192x192.png"
+        "foregroundImage": "./assets/favicon/web-app-manifest-512x512.png"
       },
       "predictiveBackGestureEnabled": false
     },
@@ -34,7 +34,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/splash-icon.png",
+          "image": "./assets/favicon/web-app-manifest-512x512.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#00B4D8"

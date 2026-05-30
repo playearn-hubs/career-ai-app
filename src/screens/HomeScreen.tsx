@@ -14,11 +14,13 @@ import {
 import { useAuth } from "../features/auth";
 import { useGsapEntrance } from "../features/auth/hooks/useGsapEntrance";
 import { useTheme } from "../theme";
+import { useToast } from "../providers";
 import { getGreeting, formatDate } from "../utils";
 
 export function HomeScreen() {
   const { session, signOut } = useAuth();
   const { mode } = useTheme();
+  const toast = useToast();
   const greeting = getGreeting();
   const currentDate = formatDate();
   const headerAnimation = useGsapEntrance({ delay: 0.1 });
@@ -73,7 +75,14 @@ export function HomeScreen() {
         </View>
 
         <View className="mb-8 mt-auto">
-          <Button title="Sign Out" variant="outline" onPress={signOut} />
+          <Button
+            title="Sign Out"
+            variant="outline"
+            onPress={async () => {
+              await signOut();
+              toast.showInfo("You have been signed out.");
+            }}
+          />
         </View>
       </View>
     </ScreenContainer>

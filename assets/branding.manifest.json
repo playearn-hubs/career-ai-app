@@ -15,7 +15,8 @@
     "pwaIcon192": "./assets/favicon/web-app-manifest-192x192.png",
     "pwaIcon512": "./assets/favicon/web-app-manifest-512x512.png",
     "logo": "./assets/favicon/favicon.svg",
-    "splash": "./assets/splash-icon.png"
+    "splash": "./assets/favicon/web-app-manifest-512x512.png",
+    "webManifest": "./assets/favicon/site.webmanifest"
   },
   "web": {
     "logo": "/favicon/favicon.svg",
@@ -33,12 +34,14 @@
     "manifest192": "web-app-manifest-192x192.png",
     "manifest512": "web-app-manifest-512x512.png",
     "logo": "favicon.svg",
-    "splash": "splash-icon.png",
+    "splash": "web-app-manifest-512x512.png",
+    "webManifest": "site.webmanifest",
     "files": [
       "apple-touch-icon.png",
       "favicon-96x96.png",
       "favicon.ico",
       "favicon.svg",
+      "site.webmanifest",
       "web-app-manifest-192x192.png",
       "web-app-manifest-512x512.png"
     ]

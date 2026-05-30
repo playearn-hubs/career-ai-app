@@ -9,6 +9,7 @@ import React, {
 import type { AuthSession } from "../types";
 import type { LoginFormData, RegisterFormData } from "../schemas/auth.schema";
 import {
+  fetchCurrentUser,
   loginWithEmail,
   loginWithGoogle,
   registerWithEmail,
@@ -25,10 +26,7 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   signIn: (data: LoginFormData) => Promise<void>;
   signUp: (data: RegisterFormData) => Promise<void>;
-  signInWithGoogle: (
-    accessToken: string,
-    profile?: { name?: string; email?: string; picture?: string }
-  ) => Promise<void>;
+  signInWithGoogle: (idToken: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -39,9 +37,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getStoredSession()
-      .then(setSession)
-      .finally(() => setIsLoading(false));
+    async function restoreSession() {
+      const stored = await getStoredSession();
+
+      if (!stored?.accessToken) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const user = await fetchCurrentUser(stored.accessToken);
+        setSession({ user, accessToken: stored.accessToken });
+      } catch {
+        await clearSession();
+        setSession(null);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    void restoreSession();
   }, []);
 
   const persistSession = useCallback(async (nextSession: AuthSession) => {
@@ -66,11 +81,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const signInWithGoogleHandler = useCallback(
-    async (
-      accessToken: string,
-      profile?: { name?: string; email?: string; picture?: string }
-    ) => {
-      const nextSession = await loginWithGoogle(accessToken, profile);
+    async (idToken: string) => {
+      const nextSession = await loginWithGoogle(idToken);
       await persistSession(nextSession);
     },
     [persistSession]

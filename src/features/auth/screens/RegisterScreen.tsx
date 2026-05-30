@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Animated, Alert, View } from "react-native";
+import { Animated, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../../types/navigation";
@@ -11,11 +11,14 @@ import { useAuth } from "../context";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import { useGsapStagger } from "../hooks/useGsapEntrance";
 import { registerSchema } from "../schemas/auth.schema";
+import { getErrorMessage } from "../../../lib/api/errors";
+import { useToast } from "../../../providers";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Register">;
 
 export function RegisterScreen({ navigation }: Props) {
   const { signUp, signInWithGoogle } = useAuth();
+  const toast = useToast();
   const {
     signInWithGoogle: googleAuth,
     isLoading: googleLoading,
@@ -46,6 +49,8 @@ export function RegisterScreen({ navigation }: Props) {
         if (key) fieldErrors[key] = issue.message;
       });
       setErrors(fieldErrors);
+      const firstError = result.error.issues[0]?.message;
+      toast.showError(firstError ?? "Please fix the errors below");
       return;
     }
 
@@ -53,8 +58,9 @@ export function RegisterScreen({ navigation }: Props) {
     setLoading(true);
     try {
       await signUp(result.data);
-    } catch {
-      Alert.alert("Registration failed", "Please try again.");
+      toast.showSuccess("Account created! Welcome to Career AI.");
+    } catch (error) {
+      toast.showError(getErrorMessage(error, "Please try again."));
     } finally {
       setLoading(false);
     }
@@ -65,14 +71,17 @@ export function RegisterScreen({ navigation }: Props) {
     if (!result) return;
 
     if (!result.success) {
-      Alert.alert("Google Sign-In", result.error);
+      toast.showError(result.error);
       return;
     }
 
     try {
-      await signInWithGoogle(result.accessToken, result.profile);
-    } catch {
-      Alert.alert("Registration failed", "Could not complete Google sign-in.");
+      await signInWithGoogle(result.idToken);
+      toast.showSuccess("Signed in with Google.");
+    } catch (error) {
+      toast.showError(
+        getErrorMessage(error, "Could not complete Google sign-in.")
+      );
     }
   };
 

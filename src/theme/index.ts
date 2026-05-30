@@ -6,3 +6,4 @@ export {
   type ThemeColors,
   type ThemeMode,
 } from "./tokens";
+export { useThemedStyles } from "./useThemedStyles";

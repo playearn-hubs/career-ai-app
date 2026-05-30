@@ -3,6 +3,7 @@ import { NavigationContainer, DarkTheme, DefaultTheme } from "@react-navigation/
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "../features/auth";
 import { ThemeProvider, useTheme } from "../theme";
+import { ToastProvider } from "./ToastProvider";
 
 type AppProvidersProps = {
   children: React.ReactNode;
@@ -47,9 +48,11 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <AuthProvider>
-          <NavigationThemeProvider>{children}</NavigationThemeProvider>
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <NavigationThemeProvider>{children}</NavigationThemeProvider>
+          </AuthProvider>
+        </ToastProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
