@@ -1,5 +1,6 @@
 import React from "react";
 import { NavigationContainer, DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "../features/auth";
 import { ThemeProvider, useTheme } from "../theme";
@@ -47,13 +48,15 @@ function NavigationThemeProvider({ children }: AppProvidersProps) {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <SafeAreaProvider>
-      <ThemeProvider>
-        <ToastProvider>
-          <AuthProvider>
-            <NavigationThemeProvider>{children}</NavigationThemeProvider>
-          </AuthProvider>
-        </ToastProvider>
-      </ThemeProvider>
+      <KeyboardProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <NavigationThemeProvider>{children}</NavigationThemeProvider>
+            </AuthProvider>
+          </ToastProvider>
+        </ThemeProvider>
+      </KeyboardProvider>
     </SafeAreaProvider>
   );
 }

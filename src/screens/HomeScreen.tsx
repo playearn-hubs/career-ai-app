@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image } from "react-native";
+import { Animated, View, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { ScreenContainer } from "../components/layout";
 import {
@@ -13,18 +13,19 @@ import {
 } from "../components/ui";
 import { useAuth } from "../features/auth";
 import { useGsapEntrance } from "../features/auth/hooks/useGsapEntrance";
-import { useTheme } from "../theme";
+import { useTheme, useThemedStyles } from "../theme";
 import { useToast } from "../providers";
 import { getGreeting, formatDate } from "../utils";
 
 export function HomeScreen() {
   const { session, signOut } = useAuth();
   const { mode } = useTheme();
+  const themed = useThemedStyles();
   const toast = useToast();
   const greeting = getGreeting();
   const currentDate = formatDate();
-  const headerAnimation = useGsapEntrance({ delay: 0.1 });
-  const cardAnimation = useGsapEntrance({ delay: 0.25, y: 24 });
+  const headerAnimation = useGsapEntrance({ delay: 100 });
+  const cardAnimation = useGsapEntrance({ delay: 250 });
 
   return (
     <ScreenContainer>
@@ -35,7 +36,7 @@ export function HomeScreen() {
           <ThemeToggle />
         </View>
 
-        <View style={headerAnimation.style} className="mb-8">
+        <Animated.View style={headerAnimation.style} className="mb-8">
           <Caption className="mb-1">{currentDate}</Caption>
           <Heading>
             {greeting}, {session?.user.name ?? "there"} 👋
@@ -49,9 +50,9 @@ export function HomeScreen() {
               className="mt-4 h-16 w-16 rounded-full"
             />
           ) : null}
-        </View>
+        </Animated.View>
 
-        <View style={cardAnimation.style} className="gap-4">
+        <Animated.View style={cardAnimation.style} className="gap-4">
           <Card>
             <View className="gap-2">
               <Body className="font-sans-semibold">Account</Body>
@@ -61,7 +62,10 @@ export function HomeScreen() {
 
           <Card>
             <View className="flex-row items-center gap-4">
-              <View className="h-12 w-12 items-center justify-center rounded-xl bg-accent-glow">
+              <View
+                className="h-12 w-12 items-center justify-center rounded-xl"
+                style={{ backgroundColor: themed.colors.accentGlow }}
+              >
                 <Body className="text-2xl">🔐</Body>
               </View>
               <View className="flex-1">
@@ -72,7 +76,7 @@ export function HomeScreen() {
               </View>
             </View>
           </Card>
-        </View>
+        </Animated.View>
 
         <View className="mb-8 mt-auto">
           <Button

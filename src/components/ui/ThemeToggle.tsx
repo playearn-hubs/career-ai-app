@@ -4,7 +4,7 @@ import { useTheme } from "../../theme";
 
 type ThemeToggleProps = {
   className?: string;
-  variant?: "default" | "onPrimary";
+  variant?: "default" | "onPrimary" | "auth";
 };
 
 export function ThemeToggle({
@@ -15,22 +15,41 @@ export function ThemeToggle({
   const isDark = mode === "dark";
 
   const isOnPrimary = variant === "onPrimary";
+  const isAuth = variant === "auth";
 
   const backgroundColor = isOnPrimary
     ? "rgba(255, 255, 255, 0.95)"
-    : colors.card;
+    : isAuth
+      ? isDark
+        ? "rgba(255, 255, 255, 0.95)"
+        : "#1E3A5F"
+      : colors.card;
 
   const borderColor = isOnPrimary
     ? "rgba(255, 255, 255, 0.6)"
-    : colors.border;
+    : isAuth
+      ? isDark
+        ? "rgba(255, 255, 255, 0.5)"
+        : "rgba(30, 58, 95, 0.8)"
+      : colors.border;
 
-  const textColor = isOnPrimary ? "#0F172A" : colors.content;
+  const textColor = isOnPrimary
+    ? "#0F172A"
+    : isAuth
+      ? isDark
+        ? "#0F172A"
+        : "#FFFFFF"
+      : colors.content;
 
   const iconBg = isOnPrimary
     ? "rgba(0, 180, 216, 0.15)"
-    : isDark
-      ? "rgba(0, 180, 216, 0.25)"
-      : "rgba(0, 180, 216, 0.12)";
+    : isAuth
+      ? isDark
+        ? "rgba(0, 180, 216, 0.15)"
+        : "rgba(255, 255, 255, 0.15)"
+      : isDark
+        ? "rgba(0, 180, 216, 0.25)"
+        : "rgba(0, 180, 216, 0.12)";
 
   return (
     <Pressable

@@ -36,7 +36,7 @@ const VARIANT_CONFIG = {
 export function Toast({ message, variant, visible, onDismiss }: ToastProps) {
   const insets = useSafeAreaInsets();
   const { mode, colors } = useTheme();
-  const translateY = useRef(new Animated.Value(-120)).current;
+  const translateYAnim = useRef(new Animated.Value(-120)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
   const config = VARIANT_CONFIG[variant];
@@ -48,7 +48,7 @@ export function Toast({ message, variant, visible, onDismiss }: ToastProps) {
   useEffect(() => {
     if (visible) {
       Animated.parallel([
-        Animated.spring(translateY, {
+        Animated.spring(translateYAnim, {
           toValue: 0,
           useNativeDriver: true,
           damping: 18,
@@ -62,7 +62,7 @@ export function Toast({ message, variant, visible, onDismiss }: ToastProps) {
       ]).start();
     } else {
       Animated.parallel([
-        Animated.timing(translateY, {
+        Animated.timing(translateYAnim, {
           toValue: -120,
           duration: 200,
           useNativeDriver: true,
@@ -74,7 +74,7 @@ export function Toast({ message, variant, visible, onDismiss }: ToastProps) {
         }),
       ]).start();
     }
-  }, [visible, translateY, opacity]);
+  }, [visible, translateYAnim, opacity]);
 
   return (
     <Animated.View
@@ -86,7 +86,7 @@ export function Toast({ message, variant, visible, onDismiss }: ToastProps) {
         right: 16,
         zIndex: 9999,
         opacity,
-        transform: [{ translateY }],
+        transform: [{ translateY: translateYAnim }],
       }}
     >
       <Pressable onPress={onDismiss}>

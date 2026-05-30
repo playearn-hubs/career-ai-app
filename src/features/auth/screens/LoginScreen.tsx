@@ -1,26 +1,32 @@
 import React, { useState } from "react";
-import { Animated, View } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../../types/navigation";
-import { Button } from "../../../components/ui/Button";
-import { TextField, PasswordField } from "../../../components/ui/TextField";
-import { GoogleButton, Divider } from "../../../components/ui/SocialButton";
-import { AuthLayout, AuthLink } from "../components";
+import {
+  AuthLayout,
+  AuthLink,
+  AuthTextField,
+  AuthGradientButton,
+  AuthDivider,
+  GoogleSignInButton,
+  AuthSecurityBadge,
+} from "../components";
 import { useAuth } from "../context";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import { useGsapStagger } from "../hooks/useGsapEntrance";
 import { loginSchema } from "../schemas/auth.schema";
 import { getErrorMessage } from "../../../lib/api/errors";
 import { useToast } from "../../../providers";
-import { useThemedStyles } from "../../../theme";
+import { useTheme } from "../../../theme";
+import { getAuthPalette } from "../components/authTheme";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
 export function LoginScreen({ navigation }: Props) {
   const { signIn, signInWithGoogle } = useAuth();
   const toast = useToast();
-  const themed = useThemedStyles();
+  const { mode } = useTheme();
+  const palette = getAuthPalette(mode);
   const {
     signInWithGoogle: googleAuth,
     isLoading: googleLoading,
@@ -43,8 +49,9 @@ export function LoginScreen({ navigation }: Props) {
         if (key) fieldErrors[key] = issue.message;
       });
       setErrors(fieldErrors);
-      const firstError = result.error.issues[0]?.message;
-      toast.showError(firstError ?? "Please fix the errors below");
+      toast.showError(
+        result.error.issues[0]?.message ?? "Please fix the errors below"
+      );
       return;
     }
 
@@ -83,8 +90,10 @@ export function LoginScreen({ navigation }: Props) {
 
   return (
     <AuthLayout
-      title="Welcome back"
+      greeting="Welcome Back! 👋"
       subtitle="Sign in to continue to your account"
+      cardTitle="Sign in with email"
+      activeDotIndex={1}
       footer={
         <AuthLink
           prompt="Don't have an account?"
@@ -93,63 +102,95 @@ export function LoginScreen({ navigation }: Props) {
         />
       }
     >
-      <StatusBar style="light" />
+      <Animated.View style={animations[0]?.style}>
+        <AuthTextField
+          label="Email Address"
+          icon="mail"
+          palette={palette}
+          value={email}
+          onChangeText={setEmail}
+          placeholder="you@example.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          error={errors.email}
+        />
+      </Animated.View>
 
-      <View className="gap-5">
-        <Animated.View style={animations[0]?.style}>
-          <TextField
-            label="Email"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="you@example.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoComplete="email"
-            error={errors.email}
-          />
-        </Animated.View>
+      <Animated.View style={animations[1]?.style}>
+        <AuthTextField
+          label="Password"
+          icon="lock"
+          palette={palette}
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Enter your password"
+          autoComplete="password"
+          secureToggle
+          error={errors.password}
+        />
+        <Pressable
+          onPress={() => toast.showInfo("Password reset is coming soon.")}
+          style={styles.forgotRow}
+        >
+          <Text style={[styles.forgotText, { color: palette.link }]}>
+            Forgot Password?
+          </Text>
+        </Pressable>
+      </Animated.View>
 
-        <Animated.View style={animations[1]?.style}>
-          <PasswordField
-            label="Password"
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter your password"
-            autoComplete="password"
-            error={errors.password}
-          />
-        </Animated.View>
+      <Animated.View style={animations[2]?.style}>
+        <AuthGradientButton
+          title="Sign In"
+          onPress={handleLogin}
+          loading={loading}
+          palette={palette}
+        />
+      </Animated.View>
 
-        <Animated.View style={animations[2]?.style}>
-          <Button
-            title="Sign In"
-            onPress={handleLogin}
-            loading={loading}
-            className="mt-2"
-          />
-        </Animated.View>
-
-        <Animated.View style={animations[3]?.style}>
-          <Divider />
-        </Animated.View>
-
-        <Animated.View style={animations[4]?.style}>
-          <GoogleButton
-            title="Continue with Google"
+      <Animated.View style={animations[3]?.style}>
+        <AuthDivider palette={palette} label="or continue with" />
+        <View style={styles.googleWrap}>
+          <GoogleSignInButton
+            palette={palette}
             onPress={handleGoogleSignIn}
             loading={googleLoading}
             disabled={!isConfigured}
+            label="Sign in with Google"
           />
-          {!isConfigured ? (
-            <Animated.Text
-              className="mt-3 text-center font-sans text-xs"
-              style={{ color: themed.colors.contentTertiary }}
-            >
-              Add Google client IDs in .env, then rebuild with npx expo run:android
-            </Animated.Text>
-          ) : null}
-        </Animated.View>
-      </View>
+        </View>
+        {!isConfigured ? (
+          <Text style={[styles.hint, { color: palette.dividerText }]}>
+            Google sign-in requires client IDs in .env and a dev build (npx expo
+            run:android).
+          </Text>
+        ) : null}
+      </Animated.View>
+
+      <Animated.View style={animations[4]?.style}>
+        <AuthSecurityBadge palette={palette} />
+      </Animated.View>
     </AuthLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  forgotRow: {
+    alignSelf: "flex-end",
+    marginTop: 8,
+  },
+  forgotText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 13,
+  },
+  googleWrap: {
+    marginTop: 4,
+  },
+  hint: {
+    marginTop: 10,
+    textAlign: "center",
+    fontFamily: "Inter_400Regular",
+    fontSize: 11,
+    lineHeight: 16,
+  },
+});
